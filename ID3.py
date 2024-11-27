@@ -9,7 +9,7 @@ def _entropy(fields):
   n = len(fields)
   
   for field in fields:
-    d[field["Class"]] += 1
+    d[field["Placing"]] += 1
   
   return sum([-(count/n) * math.log2(count/n) for count in d.values()])
 
@@ -26,7 +26,7 @@ def ID3(examples, default):
   # Step 2
   d = {}
   for example in examples:
-    d[example["Class"]] = d.get(example["Class"], 0) + 1
+    d[example["Placing"]] = d.get(example["Placing"], 0) + 1
   keyVals = list(d.items())
   keyVals.sort(reverse=True, key=lambda x: x[1])
   t.label = keyVals[0][0]
@@ -52,7 +52,7 @@ def ID3(examples, default):
   possible_vals = defaultdict(set)
   for example in examples:
     for key, val in example.items():
-      if key == "Class" or val == "?":
+      if key == "Placing" or key == "Rk" or key == "School" or  val == "?":
         continue
       possible_vals[key].add(val)
   
@@ -144,7 +144,7 @@ def test(node, examples):
 
   for example in examples:
     predicted = evaluate(node, example)  # get prediction
-    actual = example["Class"]  # get actual
+    actual = example["Placing"]  # get actual
 
     if predicted == actual:
       correct += 1
