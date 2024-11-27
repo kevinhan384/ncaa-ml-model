@@ -54,7 +54,7 @@ class net3(nn.Module):
 
     
 if __name__ == "__main__":
-    data = read_data.read_data("23-24-combined.csv")
+    data = read_data.read_data("data/23-24-combined.csv")
     x_train = []
     y_train = []
     schools = []

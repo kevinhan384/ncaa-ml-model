@@ -4,7 +4,7 @@ from forest import RandomForest
   
 #Q6
 def testRandomForest():
-    forest = RandomForest("thresholded_output.csv", 7)
+    forest = RandomForest("data/thresholded_output.csv", 7)
     acc = forest.testForestAcc()
     print(acc)
 
