@@ -14,7 +14,7 @@ import numpy as np
 # concat_df.to_csv("23-24-combined.csv", index=False)
 
 def threshold():
-    file_path = "data/23-24-combined.csv"
+    file_path = "data/all-years-combined.csv"
     data = pd.read_csv(file_path)
 
     numerical_columns = data.columns[2:len(data.columns) - 1]
@@ -33,7 +33,7 @@ def threshold():
             quantiles = data[column].quantile([0.33, 0.66])
             thresholded_data[column] = data[column].apply(assign_threshold, args=(quantiles,))
 
-    output_path = "data/thresholded_output.csv"
+    output_path = "data/all-years-thresholded.csv"
     thresholded_data.to_csv(output_path, index=False)
 
 threshold()
