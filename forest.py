@@ -6,12 +6,12 @@ from collections import defaultdict
 class RandomForest():
     def __init__(self, filename, num_trees):
         data = read_data.read_data(filename)
-        self.test = data[55:68]
-        valid = data[48:55]
+        self.test = data[520:600]
+        valid = data[450:520]
         self.forest = []
         for _ in range(num_trees):
             random.shuffle(data)
-            train = data[0:48]
+            train = data[0:450]
             tree = ID3.ID3(train, 64)
             pruned = ID3.prune(tree, valid)
             self.forest.append(pruned)
