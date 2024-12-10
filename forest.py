@@ -51,6 +51,17 @@ class RandomForest():
             68:7
         }
         
+        corrects = 0
+        targs_classes = [placing_to_id[int(i)] for i in targs]
+        preds_classes = [placing_to_id[int(i)] for i in preds]
+        
+        for i in range(len(preds_classes)):
+            if preds_classes[i] == targs_classes[i] or preds_classes[i] == targs_classes[i]-1 or preds_classes[i] == targs_classes[i]+1:
+                corrects += 1
+        
+        print(corrects/len(targs_classes))
+        
+        
         # Populate the confusion matrix
         for actual, predicted in zip(targs, preds):
             mat[placing_to_id[int(actual)]][placing_to_id[int(predicted)]] += 1

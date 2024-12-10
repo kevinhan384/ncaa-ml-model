@@ -32,10 +32,10 @@ class net3(nn.Module):
         
         return output
     
-def train(x_train, y_train, model, lossfunc, optimizer):
+def train(x_train, y_train, model, lossfunc, optimizer, epochs = 200):
     # Training loop
     train_loss = []
-    for batch in range(200):
+    for batch in range(epochs):
         optimizer.zero_grad()
         outputs = model(x_train)
         loss = lossfunc(outputs, y_train)
@@ -146,10 +146,10 @@ def cross_validate():
         y_train = torch.tensor(y_train, dtype=torch.long)
         y_test = torch.tensor(y_test, dtype=torch.long)
         
-        nodes_1 = 40 
+        nodes_1 = 45     
         nodes_2 = 30
         lr = 0.001
-        epochs = 25 
+        epochs = 200 
         
         model = net3(41,nodes_1, nodes_2, 8)
         lossfunc = nn.CrossEntropyLoss()
@@ -157,14 +157,14 @@ def cross_validate():
         
         train_losses = []
         for i in range(epochs):
-            train_loss, model = train(x_train, y_train, model, lossfunc, optimizer)
+            train_loss, model = train(x_train, y_train, model, lossfunc, optimizer, epochs = epochs)
             train_losses.append(train_loss)
             
         outputs = model(x_test)
         _ , predicted_classes = torch.max(outputs, dim=1)
 
-        for i,val in enumerate(y_test):
-            print(f"{schools[i]} - Predicted {id_to_placing[predicted_classes[i]]}, Actual {id_to_placing[val]} ")        
+        # for i,val in enumerate(y_test):
+        #     print(f"{schools[i]} - Predicted {id_to_placing[predicted_classes[i]]}, Actual {id_to_placing[val]} ")        
         
         test(predicted_classes, y_test)
         
