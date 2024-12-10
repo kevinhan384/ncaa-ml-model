@@ -17,7 +17,6 @@ class net3(nn.Module):
         # self.activation2 = nn.ReLU()
         
         self.linear_out = nn.Linear(nodes_1, output_size)
-        # self.activation_out = nn.Softmax(dim=1)
 
     def forward(self,x):
         output = self.l1(x)
@@ -28,7 +27,7 @@ class net3(nn.Module):
         # output = self.activation2(output)
         # output = self.dropout2(output)
         
-        #crossentropoy loss expects logits so no need to apply activation function
+        #crossentropy loss expects logits so no need to apply activation function
         output = self.linear_out(output) 
         
         return output
@@ -52,9 +51,8 @@ def test(preds, targs):
     correct = 0
     
     for i in range(len(preds)):
-        if preds[i] == targs[i]:
+        if preds[i] == targs[i] or preds[i] == targs[i]-1 or preds[i] == targs[i]+1:
             correct += 1
-
 
     # confusion matrix
     num_classes = 8
@@ -153,7 +151,7 @@ def cross_validate():
         lr = 0.001
         epochs = 25 
         
-        model = net3(40,nodes_1, nodes_2, 8)
+        model = net3(41,nodes_1, nodes_2, 8)
         lossfunc = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-1)
         
@@ -169,6 +167,7 @@ def cross_validate():
             print(f"{schools[i]} - Predicted {id_to_placing[predicted_classes[i]]}, Actual {id_to_placing[val]} ")        
         
         test(predicted_classes, y_test)
+        
         print("\n\n")
         
         
