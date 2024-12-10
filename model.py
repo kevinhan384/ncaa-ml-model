@@ -36,7 +36,6 @@ class net3(nn.Module):
 def train(x_train, y_train, model, lossfunc, optimizer):
     # Training loop
     train_loss = []
-    # val_loss = []
     for batch in range(200):
         optimizer.zero_grad()
         outputs = model(x_train)
@@ -46,14 +45,6 @@ def train(x_train, y_train, model, lossfunc, optimizer):
 
         if batch % 10 == 0:
             train_loss.append(loss.item())
-            # print(train_loss)
-            
-        # # Validation step (no gradient updates)
-        # with torch.no_grad():  # No need to compute gradients for validation
-        #     val_outputs = model(torch.tensor(x_valid))
-        #     val_loss_value = lossfunc(val_outputs.squeeze(1), torch.tensor(y_valid).squeeze(1))
-        #     if batch % 10 == 0:
-        #         val_loss.append(val_loss_value.item())
             
     return train_loss, model
     
@@ -63,8 +54,33 @@ def test(preds, targs):
     for i in range(len(preds)):
         if preds[i] == targs[i]:
             correct += 1
-            
-    return correct / len(preds)
+
+
+    # confusion matrix
+    num_classes = 8
+    mat = np.zeros((num_classes, num_classes), dtype=int)
+    
+    # Populate the confusion matrix
+    for actual, predicted in zip(targs, preds):
+        mat[actual][predicted] += 1
+    
+    print(mat)
+    
+    TP = 0
+    FP = 0
+    FN = 0
+    for i in range(len(mat)):
+        TP += mat[i][i]  # True positives for class i
+        FP += sum(mat[j][i] for j in range(num_classes)) - mat[i][i]  # False positives for class i
+        FN += sum(mat[i][j] for j in range(num_classes)) - mat[i][i]  # False negatives for class i
+    
+    prec = TP / (TP+FP)
+    rec = TP / (TP + FN)
+    f1 = 2 * (prec * rec) / (prec + rec) if prec + rec > 0 else 0
+    
+    print(f"F1: {f1} ")
+    
+    print(correct / len(preds))
 
 def cross_validate():
     years = ['14-15','15-16','16-17','17-18','18-19','20-21', '21-22', '22-23', '23-24']
@@ -152,74 +168,10 @@ def cross_validate():
         for i,val in enumerate(y_test):
             print(f"{schools[i]} - Predicted {id_to_placing[predicted_classes[i]]}, Actual {id_to_placing[val]} ")        
         
-        print(test(predicted_classes, y_test))
+        test(predicted_classes, y_test)
         print("\n\n")
         
         
 
 if __name__ == "__main__":
     cross_validate()
-    
-    # data = read_data.read_data("data/all-years-combined.csv")
-    # x_data = []
-    # y_data = []
-    # schools = []
-    
-    # #id to placing
-    # id_to_placing = [1,2,4,8,16,32,64,68]
-    
-    # #placing to id
-    # placing_to_id = {
-    #     1:0,
-    #     2:1,
-    #     4:2,
-    #     8:3,
-    #     16:4,
-    #     32:5,
-    #     64:6,
-    #     68:7
-    # }
-    
-    # for sample in data:
-    #     x = [1.0]
-    #     # print(sample)
-    #     for key,val in sample.items():
-    #         if key == "Placing":
-    #             y_data.append(placing_to_id[int(val)])
-    #         elif key != "Rk" and key != "School":
-    #             x.append(float(val))
-    #     x_data.append(x)
-        
-    # x_train = torch.tensor(x_data[:500], dtype=torch.float32)
-    # x_test = torch.tensor(x_data[500:], dtype=torch.float32)
-    
-    # y_train = torch.tensor(y_data[:500], dtype=torch.long)
-    # y_test = torch.tensor(y_data[500:], dtype=torch.long)
-    
-    # nodes_1 = 40 
-    # nodes_2 = 30
-    # lr = 0.001
-    # epochs = 25 
-    
-    # model = net3(40,nodes_1, nodes_2, 8)
-    # lossfunc = nn.CrossEntropyLoss()
-    # optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-1)
-    
-    # train_losses = []
-    # for i in range(epochs):
-    #     train_loss, model = train(x_train, y_train, model, lossfunc, optimizer)
-    #     train_losses.append(train_loss)
-    # # print(train_losses)
-    
-    # #plot losses
-    # # plt.figure()
-    # # plt.plot([i for i in range(epochs)], [sum(epoch_loss)/len(epoch_loss) for epoch_loss in train_loss])
-    # # plt.xlabel("Epochs")
-    # # plt.ylabel(" Loss")
-    # # plt.show()
-        
-    # outputs = model(x_test)
-    # _ , predicted_classes = torch.max(outputs, dim=1)
-    # print(y_test)
-    # print(predicted_classes)
-    # print(test(predicted_classes, y_test))
