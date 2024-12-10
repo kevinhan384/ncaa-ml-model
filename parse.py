@@ -14,7 +14,7 @@ import numpy as np
 # concat_df.to_csv("23-24-combined.csv", index=False)
 
 def threshold():
-    year = "15-16"
+    year = "21-22"
     file_path = f"data/{year}-combined.csv"
     data = pd.read_csv(file_path)
 
